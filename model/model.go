@@ -1,10 +1,10 @@
-package models
+package model
 
-type request struct{
+type Request struct{
 	URL		string		`json:"url"`
 }
 
-type response	struct{
+type Response	struct{
 	URL		string		`json:"url"`
 }
 

@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func ShortenUrlHandler(w http.ResponseWriter , r *http.Request){
-
+func GetShortHandler(w http.ResponseWriter , r *http.Request){
+	
 }
