@@ -7,6 +7,6 @@ import (
 )
 
 func SetupRoutes(){
-	http.HandleFunc("api/v1/shorten",controllers.ShortenUrlHandler)
-	http.HandleFunc("api/v1/shorurl",controllers.GetShortHandler)
+	http.HandleFunc("/shorten",controllers.ShortenUrlHandler)
+	http.HandleFunc("/",controllers.Redirect)
 }

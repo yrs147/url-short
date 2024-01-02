@@ -10,6 +10,12 @@ import (
 	"github.com/yrs147/url-short/model"
 )
 
+var urlMappings map[string]string
+
+func init() {
+	urlMappings = make(map[string]string)
+}
+
 
 func ShortenUrlHandler(w http.ResponseWriter, r *http.Request) {
 	
@@ -22,6 +28,8 @@ func ShortenUrlHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	shortUrl := generateURL()
+
+	urlMappings[shortUrl] = req.URL
 
 	response := model.Response{
 		URL : shortUrl,
@@ -39,7 +47,20 @@ func generateURL() string{
 
 	id :=  uuid.String()[:8]
 
-	hashid := b64.StdEncoding.EncodeToString([]byte(id))
+	hashid := b64.StdEncoding.EncodeToString([]byte(id))[:5]
 
-	return hashid[:5]
+	url := "http://localhost:9090/"+hashid
+
+	return url
+	
+}
+
+func Redirect(w http.ResponseWriter , r *http.Request){
+	shortURL := r.URL.Path[1:]
+	longURL, exists := urlMappings[shortURL]
+	if exists{
+		http.Redirect(w,r,longURL, http.StatusFound)
+	} else{
+		http.NotFound(w,r)
+	}
 }
