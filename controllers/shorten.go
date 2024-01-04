@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	b64 "encoding/base64"
-
 	"github.com/google/uuid"
 	"github.com/yrs147/url-short/model"
 )
@@ -16,13 +14,12 @@ func init() {
 	urlMappings = make(map[string]string)
 }
 
-
 func ShortenUrlHandler(w http.ResponseWriter, r *http.Request) {
-	
+
 	var req model.Request
-	
+
 	err := json.NewDecoder(r.Body).Decode(&req)
-	if err !=nil{
+	if err != nil {
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
 		return
 	}
@@ -32,35 +29,30 @@ func ShortenUrlHandler(w http.ResponseWriter, r *http.Request) {
 	urlMappings[shortUrl] = req.URL
 
 	response := model.Response{
-		URL : shortUrl,
+		URL: shortUrl,
 	}
 
-	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(response)
 
 }
 
-
-func generateURL() string{
+func generateURL() string {
 	uuid := uuid.New()
 
-	id :=  uuid.String()[:8]
+	id := uuid.String()[:8]
 
-	hashid := b64.StdEncoding.EncodeToString([]byte(id))[:5]
+	return id
 
-	url := "http://localhost:9090/"+hashid
-
-	return url
-	
 }
 
-func Redirect(w http.ResponseWriter , r *http.Request){
+func Redirect(w http.ResponseWriter, r *http.Request) {
 	shortURL := r.URL.Path[1:]
 	longURL, exists := urlMappings[shortURL]
-	if exists{
-		http.Redirect(w,r,longURL, http.StatusFound)
-	} else{
-		http.NotFound(w,r)
+	if exists {
+		http.Redirect(w, r, longURL, http.StatusFound)
+	} else {
+		http.NotFound(w, r)
 	}
 }
